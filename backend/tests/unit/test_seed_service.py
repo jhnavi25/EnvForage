@@ -1,6 +1,7 @@
 import pytest
-from app.schemas.seed_profile import GenerationRequest
 from pydantic import ValidationError
+
+from app.schemas.seed_profile import GenerationRequest
 
 
 def test_valid_payload_parsing():

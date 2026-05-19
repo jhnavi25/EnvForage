@@ -57,7 +57,7 @@ class ProfilesYamlSchema(BaseModel):
     """Root structure of profiles.yaml."""
 
     profiles: list[ProfileSeedSchema]
-    
+
 class GenerationRequest(BaseModel):
     """Schema for validating a generation request payload."""
     target_os: Literal["Linux", "Windows", "WSL"]

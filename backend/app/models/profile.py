@@ -2,7 +2,6 @@
 import uuid
 from datetime import date, datetime
 
-from app.models.script_job import ScriptGenerationJob
 from sqlalchemy import (
     Boolean,
     Date,
@@ -17,6 +16,7 @@ from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+from app.models.script_job import ScriptGenerationJob
 
 
 class EnvironmentProfile(Base):
