@@ -1,6 +1,6 @@
 """Pydantic schemas for script generation API."""
 import uuid
-from typing import Literal, Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 

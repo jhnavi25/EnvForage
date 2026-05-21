@@ -3,7 +3,7 @@ Data models for the Compatibility Engine.
 Pure dataclasses — no I/O, no database, no side effects.
 """
 from dataclasses import dataclass, field
-from typing import Literal, Any
+from typing import Any, Literal
 
 OSTarget = Literal["LINUX", "WSL", "WIN"]
 
