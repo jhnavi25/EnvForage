@@ -87,4 +87,4 @@ envforge fix --report my_report.json --profile pytorch-cuda
 ```
 ## Troubleshooting
 
-See `docs/TROUBLESHOOTING.md` for common errors, connection issues, and environment fixes.
+See `../TROUBLESHOOTING.md` for common errors, connection issues, and environment fixes.
