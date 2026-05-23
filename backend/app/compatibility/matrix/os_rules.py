@@ -14,7 +14,7 @@ OSTarget = Literal["LINUX", "WSL", "WIN"]
 OS_SCRIPT_FORMATS: dict[str, list[str]] = {
     "LINUX": ["setup.sh", "requirements.txt", "Dockerfile", "docker-compose.yml", "devcontainer.json"],
     "WSL":   ["setup.sh", "requirements.txt", "Dockerfile", "docker-compose.yml", "devcontainer.json"],
-    "WIN":   ["setup.ps1", "requirements.txt", "docker-compose.yml", "devcontainer.json"],
+    "WIN": ["setup.ps1", "requirements.txt", "Dockerfile", "docker-compose.yml", "devcontainer.json"],
 }
 
 # ── CUDA / GPU rules ──────────────────────────────────────────────────────────
