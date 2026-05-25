@@ -79,3 +79,4 @@ def register_exception_handlers(app: FastAPI) -> None:
     ) -> JSONResponse:
         logger.exception("Unhandled exception: %s", exc)
         return _error_response(500, "INTERNAL_SERVER_ERROR", "An unexpected error occurred.", {})
+    
