@@ -1,6 +1,7 @@
 """Global exception handlers for FastAPI application."""
 
 import logging
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -39,15 +40,16 @@ def _error_response(
 
 
 def _redact_validation_errors(
-    errors: list[dict[str, object]],
+    errors: list[Any],
 ) -> list[dict[str, object]]:
     """Strip user-supplied input values from validation errors before
     logging or returning them to the client."""
     redacted: list[dict[str, object]] = []
     for error in errors:
+        loc = error.get("loc", [])
         redacted.append({
             "type": error.get("type"),
-            "loc": list(error.get("loc", [])),  # type: ignore[arg-type]
+            "loc": [str(item) for item in loc],
             "msg": error.get("msg"),
         })
     return redacted
@@ -80,20 +82,5 @@ def register_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: RequestValidationError,
     ) -> JSONResponse:
-        redacted = _redact_validation_errors(
-            exc.errors()  # type: ignore[arg-type]
-        )
+        redacted = _redact_validation_errors(list(exc.errors()))
         logger.warning("Validation error: %s", redacted)
-        return _error_response(
-            422, "VALIDATION_ERROR", "Request validation failed.", redacted
-        )
-
-    @app.exception_handler(Exception)
-    async def unhandled_exception_handler(
-        request: Request,
-        exc: Exception,
-    ) -> JSONResponse:
-        logger.exception("Unhandled exception: %s", exc)
-        return _error_response(
-            500, "INTERNAL_SERVER_ERROR", "An unexpected error occurred.", {}
-        )
