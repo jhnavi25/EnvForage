@@ -125,4 +125,3 @@ class AIServiceUnavailableError(AppError):
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             details=merged_details,
         )
-        
