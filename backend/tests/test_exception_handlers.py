@@ -74,4 +74,3 @@ def test_all_errors_have_consistent_format():
     assert "code" in error
     assert "message" in error
     assert "details" in error
-    
