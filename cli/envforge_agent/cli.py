@@ -35,6 +35,14 @@ console = Console()
 err_console = Console(stderr=True, style="bold red")
 
 
+def _reinit_consoles(no_color: bool) -> None:
+    """Reinitialise global consoles with no-color mode if requested."""
+    global console, err_console
+    if no_color:
+        console = Console(no_color=True, highlight=False)
+        err_console = Console(stderr=True, no_color=True, highlight=False)
+
+
 def check_macos_support():
     if platform.system() == "Darwin":
         err_console.print("[ERROR] EnvForge is not currently supported on macOS.")
@@ -47,8 +55,18 @@ def check_macos_support():
 
 @click.group()
 @click.version_option(__version__, prog_name="envforge-agent")
-def cli() -> None:
+@click.option(
+    "--no-color",
+    is_flag=True,
+    default=False,
+    envvar="NO_COLOR",
+    help="Disable colour and Rich markup in all output. Useful for CI pipelines.",
+)
+@click.pass_context
+def cli(ctx: click.Context, no_color: bool) -> None:
     """EnvForge CLI Diagnostic Agent — inspect your ML environment."""
+    ctx.ensure_object(dict)
+    _reinit_consoles(no_color)
     check_macos_support()
 
 
