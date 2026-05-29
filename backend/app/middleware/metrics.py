@@ -8,8 +8,7 @@ Exposes:
 import time
 
 from fastapi import FastAPI, Request, Response
-from prometheus_client import Counter, Histogram, generate_latest, REGISTRY
-from prometheus_client.openmetrics import exposition as openmetrics
+from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest, REGISTRY
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.routing import Match
 
@@ -68,7 +67,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
     def _get_route(self, request: Request) -> str:
         for route in request.app.routes:
-            match, _ = route.matches(request)
+            match, _ = route.matches(request.scope)
             if match == Match.FULL:
                 return getattr(route, "path", route.path)
         return request.url.path
@@ -103,5 +102,5 @@ def setup_metrics(app: FastAPI) -> None:
     async def metrics() -> Response:
         return Response(
             content=generate_latest(REGISTRY),
-            media_type=openmetrics.CONTENT_TYPE,
+            media_type=CONTENT_TYPE_LATEST,
         )

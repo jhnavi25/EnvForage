@@ -96,6 +96,11 @@ class AITroubleshootService:
         except LLMProviderError as exc:
             # Log the failed attempt
             latency_ms = int((time.monotonic() - start_time) * 1000)
+            record_ai_token_usage(
+                provider=provider_name,
+                model=model_name,
+                success=False,
+            )
             await self._log_audit(
                 db,
                 session_id=None,
@@ -116,6 +121,11 @@ class AITroubleshootService:
         except SafetyViolationError as exc:
             safety_violation = str(exc)
             latency_ms = int((time.monotonic() - start_time) * 1000)
+            record_ai_token_usage(
+                provider=provider_name,
+                model=model_name,
+                success=False,
+            )
             await self._log_audit(
                 db,
                 session_id=None,
