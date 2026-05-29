@@ -53,125 +53,124 @@ export default function HomePage() {
         }}
       />
       {/* Hero Section */}
-<section
-  style={{
-    paddingTop: "8rem",
-    paddingBottom: "6rem",
-    position: "relative",
-  }}
->
-  <div
-    className="container"
-    style={{
-      display: "grid",
-      gridTemplateColumns: "1fr 1fr",
-      gap: "4rem",
-      alignItems: "center",
-    }}
-  >
-    {/* LEFT */}
-    <motion.div
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      <h1
+      <section
         style={{
-          fontSize: "5rem",
-          fontWeight: 800,
-          lineHeight: "1.1",
-          marginBottom: "1.5rem",
-          background: "linear-gradient(to right, #22c55e, #06b6d4, #3b82f6)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          textShadow: "0 0 30px rgba(34,197,94,0.35)",
-        }}
-      >
-        Build ML Environments Faster ⚡
-      </h1>
-
-      <p
-        style={{
-          fontSize: "1.2rem",
-          color: "var(--text-secondary)",
-          marginBottom: "2rem",
-        }}
-      >
-        Generate safe and optimized AI/ML setup scripts with a modern developer experience.
-      </p>
-
-      <div style={{ display: "flex", gap: "1rem" }}>
-        <Link
-          href="/diagnose"
-          style={{
-            padding: "1rem 2rem",
-            borderRadius: "16px",
-            background: "linear-gradient(to right,#22c55e,#16a34a)",
-            color: "white",
-            fontWeight: 600,
-            textDecoration: "none",
-            boxShadow: "0 10px 30px rgba(34,197,94,0.3)",
-          }}
-        >
-          Get Started
-        </Link>
-
-        <Link
-          href="/profiles"
-          style={{
-            padding: "1rem 2rem",
-            borderRadius: "16px",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "white",
-            textDecoration: "none",
-            backdropFilter: "blur(10px)",
-            background: "rgba(255,255,255,0.05)",
-          }}
-        >
-          Browse Profiles
-        </Link>
-      </div>
-    </motion.div>
-
-    {/* RIGHT */}
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      style={{
-        position: "relative",
-      }}
-    >
-      <div
-        style={{
-          background: "rgba(255,255,255,0.05)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: "24px",
-          padding: "2rem",
-          backdropFilter: "blur(12px)",
-          boxShadow: "0 10px 40px rgba(0,0,0,0.4)",
+          paddingTop: "8rem",
+          paddingBottom: "6rem",
+          position: "relative",
         }}
       >
         <div
+          className="container"
           style={{
-            height: "300px",
-            borderRadius: "20px",
-            background:
-              "linear-gradient(135deg, rgba(34,197,94,0.2), rgba(59,130,246,0.2))",
-            display: "flex",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "4rem",
             alignItems: "center",
-            justifyContent: "center",
-            fontSize: "2rem",
-            fontWeight: 700,
-            color: "white",
           }}
         >
-          ⚡ AI Powered Setup
+          {/* LEFT */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1
+              style={{
+                fontSize: "5rem",
+                fontWeight: 800,
+                lineHeight: "1.1",
+                marginBottom: "1.5rem",
+                background: "linear-gradient(to right, #22c55e, #06b6d4, #3b82f6)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textShadow: "0 0 30px rgba(34,197,94,0.35)",
+              }}
+            >
+              Build ML Environments Faster ⚡
+            </h1>
+
+            <p
+              style={{
+                fontSize: "1.2rem",
+                color: "var(--text-secondary)",
+                marginBottom: "2rem",
+              }}
+            >
+              Generate safe and optimized AI/ML setup scripts with a modern developer experience.
+            </p>
+
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <Link
+                href="/diagnose"
+                style={{
+                  padding: "1rem 2rem",
+                  borderRadius: "16px",
+                  background: "linear-gradient(to right,#22c55e,#16a34a)",
+                  color: "white",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  boxShadow: "0 10px 30px rgba(34,197,94,0.3)",
+                }}
+              >
+                Get Started
+              </Link>
+
+              <Link
+                href="/profiles"
+                style={{
+                  padding: "1rem 2rem",
+                  borderRadius: "16px",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  color: "var(--text-primary)",
+                  textDecoration: "none",
+                  backdropFilter: "blur(10px)",
+                  background: "var(--bg-tertiary)",
+                }}
+              >
+                Browse Profiles
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* RIGHT */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            style={{
+              position: "relative",
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "24px",
+                padding: "2rem",
+                backdropFilter: "blur(12px)",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.4)",
+              }}
+            >
+              <div
+                style={{
+                  height: "300px",
+                  borderRadius: "20px",
+                  background:
+                    "linear-gradient(135deg, rgba(34,197,94,0.2), rgba(59,130,246,0.2))",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "2rem",
+                  fontWeight: 700,
+                }}
+              >
+                ⚡ AI Powered Setup
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </motion.div>
-  </div>
-</section>
+      </section>
 
       {/* Features Section */}
       <section style={{ paddingTop: '4rem', paddingBottom: '4rem', background: 'rgba(0,0,0,0.2)' }}>
@@ -189,24 +188,24 @@ export default function HomePage() {
                     transition={{ delay: 0.1 + i * 0.1 }}
                     className="glass-panel"
                     style={{
-  padding: "2rem",
-  textAlign: "center",
-  background: "rgba(255,255,255,0.05)",
-  border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: "24px",
-  backdropFilter: "blur(10px)",
-  transition: "all 0.3s ease",
-  boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
-}}
+                      padding: "2rem",
+                      textAlign: "center",
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: "24px",
+                      backdropFilter: "blur(10px)",
+                      transition: "all 0.3s ease",
+                      boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
+                    }}
                   >
                     <Icon
-  size={45}
-  color="#22c55e"
-  style={{
-    margin: "0 auto 1rem",
-    filter: "drop-shadow(0 0 12px rgba(34,197,94,0.6))",
-  }}
-/>
+                      size={45}
+                      color="#22c55e"
+                      style={{
+                        margin: "0 auto 1rem",
+                        filter: "drop-shadow(0 0 12px rgba(34,197,94,0.6))",
+                      }}
+                    />
                     <h3 style={{ marginBottom: '0.75rem' }}>{feature.title}</h3>
                     <p style={{ color: 'var(--text-secondary)' }}>{feature.description}</p>
                   </motion.div>
