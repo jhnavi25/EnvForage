@@ -129,7 +129,7 @@ export default function HomePage() {
 
             <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginBottom: "4rem" }}>
               <Link
-                href="/install"
+                href="/profiles"
                 style={{
                   padding: "1rem 2rem",
                   borderRadius: "8px",
@@ -143,11 +143,11 @@ export default function HomePage() {
                   transition: "background 0.2s ease",
                 }}
               >
-                <Download size={20} /> Download EnvForage
+                <User size={20} /> View Profiles
               </Link>
 
               <Link
-                href="/docs"
+                href="/coming-soon"
                 style={{
                   padding: "1rem 2rem",
                   borderRadius: "8px",
@@ -158,24 +158,11 @@ export default function HomePage() {
                   transition: "all 0.2s ease",
                 }}
               >
-                View Documentation
+                Coming Soon
               </Link>
             </div>
 
-            <div style={{ display: "flex", gap: "4rem", borderTop: "1px solid var(--border-strong)", paddingTop: "2.5rem" }}>
-              <div>
-                <h3 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "0.25rem", letterSpacing: "-0.03em" }}>18k+</h3>
-                <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-secondary)", fontWeight: 600 }}>Known-good builds</p>
-              </div>
-              <div>
-                <h3 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "0.25rem", letterSpacing: "-0.03em" }}>100%</h3>
-                <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-secondary)", fontWeight: 600 }}>Reproducible</p>
-              </div>
-              <div>
-                <h3 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "0.25rem", letterSpacing: "-0.03em" }}>6 hrs</h3>
-                <p style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-secondary)", fontWeight: 600 }}>Saved per setup</p>
-              </div>
-            </div>
+
           </motion.div>
         </div>
       </motion.section>
@@ -216,17 +203,19 @@ export default function HomePage() {
               </motion.div>
 
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
-                <div style={{ background: "var(--bg-tertiary)", borderRadius: "16px", padding: "2.5rem", color: "var(--text-inverse)", fontFamily: "var(--font-mono)", fontSize: "0.95rem", lineHeight: 1.7, boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.25)" }}>
+                <div style={{ background: "#0f172a", borderRadius: "16px", padding: "2.5rem", color: "#f8fafc", fontFamily: "var(--font-mono)", fontSize: "0.95rem", lineHeight: 1.7, boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.25)" }}>
                   <div style={{ display: "flex", gap: "8px", marginBottom: "2rem" }}>
                     <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#ef4444" }} />
                     <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "var(--brand-secondary)" }} />
                     <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: "#22c55e" }} />
                   </div>
-                  <p style={{ color: "#22c55e", marginBottom: "1.5rem" }}>$ envforage init</p>
-                  <p style={{ color: "#94a3b8" }}>Detecting hardware...</p>
+                  <p style={{ color: "#22c55e", marginBottom: "0.5rem" }}>$ envforage diagnose</p>
+                  <p style={{ color: "#94a3b8" }}>Scanning hardware configuration...</p>
                   <p>✓ NVIDIA RTX 3090 detected</p>
                   <p>✓ CUDA 12.1 compatible</p>
-                  <p>✓ Validating dependencies...</p>
+                  <br />
+                  <p style={{ color: "#22c55e", marginBottom: "0.5rem" }}>$ envforage generate --pytorch 2.0</p>
+                  <p style={{ color: "#94a3b8" }}>Validating dependencies against matrix...</p>
                   <p style={{ color: "#22c55e", marginTop: "1rem", marginBottom: "2rem" }}>✓ Environment ready!</p>
                   <p>Generated setup script: <span style={{ color: "var(--brand-secondary)" }}>setup.sh</span></p>
                 </div>
@@ -273,49 +262,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Quotes Section */}
-        <section style={{ background: "var(--bg-tertiary)", padding: "8rem 0" }}>
-          <div className="container">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "4rem" }}>
-              <div style={{ color: "var(--text-inverse)" }}>
-                <p style={{ fontSize: "2.5rem", fontWeight: 600, fontStyle: "italic", lineHeight: 1.3, marginBottom: "2rem", fontFamily: "Georgia, serif" }}>
-                  "Dependency hell is not a rite of passage. It's a waste of time."
-                </p>
-                <p style={{ color: "var(--text-muted)", fontSize: "1.125rem" }}>— The EnvForage Team</p>
-              </div>
-              <div style={{ color: "var(--text-inverse)" }}>
-                <p style={{ fontSize: "2.5rem", fontWeight: 600, fontStyle: "italic", lineHeight: 1.3, marginBottom: "2rem", fontFamily: "Georgia, serif" }}>
-                  "Your GPU should accelerate your research, not your frustration."
-                </p>
-                <p style={{ color: "var(--text-muted)", fontSize: "1.125rem" }}>— EnvForage Philosophy</p>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Bottom CTA */}
-        <section style={{ padding: "8rem 0", textAlign: "center" }}>
-          <div className="container">
-            <h2 style={{ fontSize: "3.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "1.5rem" }}>Download EnvForage</h2>
-            <p style={{ fontSize: "1.25rem", color: "var(--text-secondary)", marginBottom: "3rem" }}>Available for all major platforms. Start eliminating dependency hell today.</p>
-            <Link
-              href="/install"
-              style={{
-                display: "inline-block",
-                padding: "1.25rem 3rem",
-                borderRadius: "8px",
-                background: "var(--brand-primary)",
-                color: "var(--text-inverse)",
-                fontWeight: 600,
-                fontSize: "1.125rem",
-                textDecoration: "none",
-                transition: "all 0.2s ease",
-              }}
-            >
-              Get Started
-            </Link>
-          </div>
-        </section>
 
       </div>
     </div>

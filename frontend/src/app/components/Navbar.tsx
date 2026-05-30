@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "../providers";
+import packageJson from "../../../package.json";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -42,7 +43,7 @@ export default function Navbar() {
               Env<span className="text-gradient">Forage</span>
             </Link>
             <span style={{ color: "var(--text-muted)", fontSize: "0.85rem", fontWeight: 500 }}>
-              MLOps • v2.1.0
+              MLOps • v{packageJson.version}
             </span>
           </div>
           <nav style={{ display: "flex", gap: "1.75rem", fontSize: "0.925rem", fontWeight: 500 }}>
@@ -94,7 +95,7 @@ export default function Navbar() {
               textDecoration: "none",
             }}
           >
-            <span style={{ color: "var(--brand-secondary)" }}>★</span> 3.8k stars
+            <span style={{ color: "var(--brand-secondary)" }}>★</span> GitHub
           </a>
         </div>
       </div>

@@ -90,7 +90,7 @@ export default function Footer() {
               <Link href="/profiles" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Profiles</Link>
               <Link href="/diagnose" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Diagnose</Link>
               <Link href="/troubleshoot" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Troubleshoot</Link>
-              <Link href="/coming-soon" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Script Generator</Link>
+              <Link href="/dependencies" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Dependencies</Link>
             </div>
           </div>
 
