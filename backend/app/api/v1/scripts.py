@@ -167,4 +167,3 @@ async def download_scripts(
             "Content-Disposition": f"attachment; filename=envforge_{job_id[:8]}.zip"
         },
     )
-

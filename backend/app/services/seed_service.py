@@ -5,6 +5,7 @@ Run once on startup (idempotent via upsert logic).
 Usage:
     python -m app.services.seed_service
 """
+
 import asyncio
 from pathlib import Path
 
@@ -129,9 +130,7 @@ async def seed_profiles(db: AsyncSession) -> None:
 
             seeded += 1
         except Exception as exc:
-            print(
-                f"[seed] Failed to seed profile '{profile_data.slug}': {exc}"
-            )
+            print(f"[seed] Failed to seed profile '{profile_data.slug}': {exc}")
             invalid += 1
 
     await db.commit()

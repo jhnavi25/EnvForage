@@ -26,6 +26,7 @@ from app.cache import get_redis_client
 from app.config import get_settings
 from app.core.handlers import register_exception_handlers
 from app.database import AsyncSessionLocal
+from app.middleware.metrics import setup_metrics
 from app.middleware.payload_size import PayloadSizeLimitMiddleware
 
 
@@ -98,7 +99,9 @@ def create_app() -> FastAPI:
             overall = "degraded"
 
         try:
-            async with asyncio.timeout(1):  # Enforce 1s timeout to prevent TCP blackhole hang
+            async with asyncio.timeout(
+                1
+            ):  # Enforce 1s timeout to prevent TCP blackhole hang
                 redis = await get_redis_client()
                 if redis is None:
                     redis_status = "not_configured"

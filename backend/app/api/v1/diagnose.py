@@ -152,7 +152,8 @@ async def diagnose(
             packages=packages,
             python_version=(
                 report.active_python.version if report.active_python else None
-            ) or "3.10",
+            )
+            or "3.10",
             cuda_version=report.cuda.version if report.cuda else None,
             rocm_version=report.rocm.version if report.rocm else None,
             target_os=target_os,
@@ -189,7 +190,11 @@ async def diagnose(
                 )
             )
         elif isinstance(result, Exception):
-            logger.warning("Resolver raised unexpected error for profile %s: %s", profile.slug, result)
+            logger.warning(
+                "Resolver raised unexpected error for profile %s: %s",
+                profile.slug,
+                result,
+            )
         else:
             assert isinstance(result, ResolvedEnvironment)
             compatible_profiles.append(profile.slug)
@@ -253,7 +258,9 @@ async def diagnose_explain(
         )
     except LLMProviderError as exc:
         latency_ms = int((time.monotonic() - start_time) * 1000)
-        _log_explain_audit(db, input_hash, False, str(exc), provider_name, 0, latency_ms)
+        _log_explain_audit(
+            db, input_hash, False, str(exc), provider_name, 0, latency_ms
+        )
         raise AIServiceUnavailableError(
             provider=provider_name,
             reason=getattr(exc, "reason", str(exc)),
@@ -267,7 +274,9 @@ async def diagnose_explain(
             validate_rendered_output(step, "ai_explain_step")
     except SafetyViolationError as exc:
         latency_ms = int((time.monotonic() - start_time) * 1000)
-        _log_explain_audit(db, input_hash, False, str(exc), provider_name, 0, latency_ms)
+        _log_explain_audit(
+            db, input_hash, False, str(exc), provider_name, 0, latency_ms
+        )
         raise InternalServerError(
             "AI response was blocked by the safety filter."
         ) from exc

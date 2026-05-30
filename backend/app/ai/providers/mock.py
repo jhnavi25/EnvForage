@@ -6,6 +6,7 @@ Scenarios:
   "mixed" → HIGH + MEDIUM + LOW fixes (tests full pipeline)
   "gate"  → score below LOW_CONFIDENCE_GATE (tests suppression)
 """
+
 import uuid
 from collections.abc import AsyncIterator
 from typing import TypeVar
@@ -22,7 +23,8 @@ from .base import LLMProvider
 T = TypeVar("T", bound=BaseModel)
 _HIGH_FIXES = [
     SuggestedFix(
-        step=1, title="Upgrade CUDA Toolkit to 12.1",
+        step=1,
+        title="Upgrade CUDA Toolkit to 12.1",
         description="CUDA 11.7 is incompatible with PyTorch 2.1. Matrix requires CUDA 12.1.",
         severity="CRITICAL",
         safe_commands=["nvcc --version", "nvidia-smi"],
@@ -34,10 +36,13 @@ _HIGH_FIXES = [
         fallback_recommendation=None,
     ),
     SuggestedFix(
-        step=2, title="Verify cuDNN 8.9.x is installed",
+        step=2,
+        title="Verify cuDNN 8.9.x is installed",
         description="cuDNN 8.9.x is pinned in the matrix for CUDA 12.1.",
         severity="WARNING",
-        safe_commands=["python -c \"import torch; print(torch.backends.cudnn.version())\""],
+        safe_commands=[
+            'python -c "import torch; print(torch.backends.cudnn.version())"'
+        ],
         repair_template_id=None,
         confidence_level=FixConfidenceLevel.HIGH,
         confidence_score=0.88,
@@ -49,10 +54,11 @@ _HIGH_FIXES = [
 
 _MIXED_FIXES = [
     SuggestedFix(
-        step=1, title="Reinstall PyTorch with CUDA index",
+        step=1,
+        title="Reinstall PyTorch with CUDA index",
         description="PyTorch installation appears to be CPU-only build.",
         severity="CRITICAL",
-        safe_commands=["python -c \"import torch; print(torch.version.cuda)\""],
+        safe_commands=['python -c "import torch; print(torch.version.cuda)"'],
         repair_template_id="repair_cuda_upgrade",
         confidence_level=FixConfidenceLevel.HIGH,
         confidence_score=0.91,
@@ -61,7 +67,8 @@ _MIXED_FIXES = [
         fallback_recommendation=None,
     ),
     SuggestedFix(
-        step=2, title="Check NVIDIA driver version",
+        step=2,
+        title="Check NVIDIA driver version",
         description="Driver 520.x may not support CUDA 12.1. Driver 525+ is recommended.",
         severity="WARNING",
         safe_commands=["nvidia-smi --query-gpu=driver_version --format=csv"],
@@ -73,7 +80,8 @@ _MIXED_FIXES = [
         fallback_recommendation="Check https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/ for your GPU.",
     ),
     SuggestedFix(
-        step=3, title="Consider switching to WSL2",
+        step=3,
+        title="Consider switching to WSL2",
         description="WSL2 with CUDA passthrough is often more stable for training workloads.",
         severity="INFO",
         safe_commands=["wsl --version"],
@@ -88,13 +96,14 @@ _MIXED_FIXES = [
 
 _GATE_FIXES = [
     SuggestedFix(
-        step=1, title="Rebuild Python from source",
+        step=1,
+        title="Rebuild Python from source",
         description="An extremely unlikely fix for edge cases.",
         severity="INFO",
         safe_commands=["python --version"],
         repair_template_id=None,
         confidence_level=FixConfidenceLevel.LOW,
-        confidence_score=0.10,   # below LOW_CONFIDENCE_GATE=0.20 → gets suppressed
+        confidence_score=0.10,  # below LOW_CONFIDENCE_GATE=0.20 → gets suppressed
         is_matrix_backed=False,
         uncertainty_reason="No evidence in diagnostic report supports this fix.",
         fallback_recommendation="Contact the EnvForge team for manual review.",
@@ -112,6 +121,7 @@ class MockProvider(LLMProvider):
 
     def __init__(self, scenario: str = "mixed") -> None:
         self._scenario = scenario
+
     async def complete(
         self,
         system_prompt: str,
@@ -133,7 +143,8 @@ class MockProvider(LLMProvider):
 
         overall_confidence = (
             sum((f.confidence_score or 0.0) for f in fixes) / len(fixes)
-            if fixes else 0.0
+            if fixes
+            else 0.0
         )
 
         return TroubleshootResponse(
@@ -142,13 +153,13 @@ class MockProvider(LLMProvider):
             suggested_fixes=fixes,
             repair_script_available=False,
             confidence=overall_confidence,
-        ) # type: ignore[return-value]
+        )  # type: ignore[return-value]
 
     async def stream(
         self,
         system_prompt: str,
         user_message: str,
         response_model: type[T],
-    )-> AsyncIterator[str]:
+    ) -> AsyncIterator[str]:
         raise NotImplementedError("MockProvider does not support streaming")
         yield ""

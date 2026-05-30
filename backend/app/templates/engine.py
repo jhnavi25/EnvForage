@@ -48,13 +48,13 @@ PROFILE_VERIFY_TEMPLATES: dict[str, str] = {
 }
 
 
-
 def _build_jinja_env() -> SandboxedEnvironment:
     return SandboxedEnvironment(
         loader=FileSystemLoader(str(TEMPLATES_DIR)),
         undefined=StrictUndefined,
         autoescape=False,
     )
+
 
 @lru_cache(maxsize=16)
 def _get_jinja_env(custom_template_dir: Path | None) -> SandboxedEnvironment:
@@ -73,13 +73,12 @@ def _get_jinja_env(custom_template_dir: Path | None) -> SandboxedEnvironment:
 
     return SandboxedEnvironment(
         loader=ChoiceLoader(loaders),
-
         undefined=StrictUndefined,
         autoescape=select_autoescape(enabled_extensions=(), default_for_string=False),
-
         trim_blocks=True,
         lstrip_blocks=True,
     )
+
 
 _JINJA_ENV = _get_jinja_env(None)
 

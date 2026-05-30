@@ -18,6 +18,7 @@ Usage:
         cuda_required=True,
     )
 """
+
 from app.compatibility.errors import (
     IncompatibilityError,
     UnknownVersionError,

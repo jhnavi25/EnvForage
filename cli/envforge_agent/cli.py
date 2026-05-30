@@ -125,10 +125,10 @@ def cli(ctx: click.Context, no_color: bool) -> None:
     help="Timeout in seconds for each detector subprocess call. Default: 30s.",
 )
 
-def diagnose(output: str | None, send: bool, api_url: str, quiet: bool, sarif: bool, timeout: int) -> None:
-    asyncio.run(_diagnose(output, send, api_url, quiet, sarif, timeout))
+def diagnose(output: str | None, send: bool, api_url: str, quiet: bool, sarif: bool, output_format: str, timeout: int) -> None:
+    asyncio.run(_diagnose(output, send, api_url, quiet, sarif, output_format, timeout))
 
-async def _diagnose(output: str | None, send: bool, api_url: str, quiet: bool, sarif: bool, timeout: int) -> None:
+async def _diagnose(output: str | None, send: bool, api_url: str, quiet: bool, sarif: bool, output_format: str, timeout: int) -> None:
     """
     Collect a full diagnostic report of this machine's ML environment.
 

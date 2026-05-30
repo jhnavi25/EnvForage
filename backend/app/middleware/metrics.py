@@ -5,10 +5,17 @@ Exposes:
   - Request count, latency, and status-code histograms
   - AI provider token consumption counters
 """
+
 import time
 
 from fastapi import FastAPI, Request, Response
-from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest, REGISTRY
+from prometheus_client import (
+    CONTENT_TYPE_LATEST,
+    REGISTRY,
+    Counter,
+    Histogram,
+    generate_latest,
+)
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.routing import Match
 
@@ -85,13 +92,13 @@ def record_ai_token_usage(
     AI_REQUESTS_TOTAL.labels(provider=provider, model=model, status=status).inc()
 
     if prompt_tokens:
-        AI_TOKENS_TOTAL.labels(
-            provider=provider, model=model, type="prompt"
-        ).inc(prompt_tokens)
+        AI_TOKENS_TOTAL.labels(provider=provider, model=model, type="prompt").inc(
+            prompt_tokens
+        )
     if completion_tokens:
-        AI_TOKENS_TOTAL.labels(
-            provider=provider, model=model, type="completion"
-        ).inc(completion_tokens)
+        AI_TOKENS_TOTAL.labels(provider=provider, model=model, type="completion").inc(
+            completion_tokens
+        )
 
 
 def setup_metrics(app: FastAPI) -> None:

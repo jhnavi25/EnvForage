@@ -19,7 +19,7 @@ from datetime import datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.exc import SQLAlchemyError, OperationalError
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.ai.models import SuggestedFix, TroubleshootRequest, TroubleshootResponse
@@ -27,6 +27,7 @@ from app.ai.prompts.system import LOW_CONFIDENCE_GATE, TROUBLESHOOT_SYSTEM_PROMP
 from app.ai.prompts.troubleshoot import TroubleshootPromptBuilder
 from app.ai.providers import get_provider
 from app.ai.providers.base import LLMProvider, LLMProviderError
+from app.middleware.metrics import record_ai_token_usage
 from app.models.ai_session import AIAuditLog, AISession, AISuggestion
 from app.templates.safety import SafetyViolationError, validate_rendered_output
 
@@ -47,8 +48,8 @@ class AITroubleshootService:
         response = await service.troubleshoot(request, db_session)
     """
 
-    def __init__(self,provider: LLMProvider | None = None) -> None:
-        self._provider=provider
+    def __init__(self, provider: LLMProvider | None = None) -> None:
+        self._provider = provider
         self._prompt_builder = TroubleshootPromptBuilder()
 
     async def troubleshoot(
@@ -165,7 +166,9 @@ class AITroubleshootService:
 
         total_tokens = token_usage.get("total_tokens", 0) if token_usage else 0
         prompt_tokens = token_usage.get("prompt_tokens", 0) if token_usage else 0
-        completion_tokens = token_usage.get("completion_tokens", 0) if token_usage else 0
+        completion_tokens = (
+            token_usage.get("completion_tokens", 0) if token_usage else 0
+        )
 
         record_ai_token_usage(
             provider=provider_name,
@@ -208,6 +211,7 @@ class AITroubleshootService:
         )
 
         return llm_result
+
     async def stream_troubleshoot(
         self,
         request: TroubleshootRequest,
@@ -300,16 +304,18 @@ class AITroubleshootService:
         except OperationalError as exc:
             logger.critical(
                 "Critical database connectivity failure for session %s: %s",
-                session_id, exc
+                session_id,
+                exc,
             )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Database service is temporarily unavailable. Unable to process history request."
+                detail="Database service is temporarily unavailable. Unable to process history request.",
             )
         except SQLAlchemyError as exc:
             logger.error(
                 "Transient database error fetching session history for %s: %s",
-                session_id, exc
+                session_id,
+                exc,
             )
             return []
 
@@ -382,7 +388,7 @@ class AITroubleshootService:
                 # 1. Use logger.exception to capture the full traceback
 
                 logger.exception(
-                    "Failed to persist AI session " "(attempt %d/%d): %s",
+                    "Failed to persist AI session (attempt %d/%d): %s",
                     attempt + 1,
                     max_retries,
                     exc,
@@ -390,22 +396,21 @@ class AITroubleshootService:
 
                 if attempt < max_retries - 1:
                     logger.warning(
-                        "Retrying AI session persistence" "for session %s",
+                        "Retrying AI session persistencefor session %s",
                         session_id,
                     )
 
                     await asyncio.sleep(1)
                 else:
-                      # 2. On final permanent failure, log critical and raise so troubleshoot() can update the audit log
+                    # 2. On final permanent failure, log critical and raise so troubleshoot() can update the audit log
                     logger.critical(
                         "AI session persistence permanently failed for session %s",
                         session_id,
                     )
                     raise
 
-
         logger.critical(
-            "AI session persistence permanently failed" " for session %s",
+            "AI session persistence permanently failed for session %s",
             session_id,
         )
 
@@ -441,8 +446,7 @@ class AITroubleshootService:
         except Exception as exc:
             logger.exception("Failed to write audit log to database: %s", exc)
 
-
-#confidence gating
+    # confidence gating
 
     def _gate_fixes(
         self, fixes: list[SuggestedFix], session_id: str
@@ -453,15 +457,18 @@ class AITroubleshootService:
             if (fix.confidence_score or 0.0) < LOW_CONFIDENCE_GATE:
                 logger.warning(
                     "session=%s step=%d '%s' suppressed (score=%.2f < gate=%.2f)",
-                    session_id, fix.step, fix.title,
-                    fix.confidence_score, LOW_CONFIDENCE_GATE,
+                    session_id,
+                    fix.step,
+                    fix.title,
+                    fix.confidence_score,
+                    LOW_CONFIDENCE_GATE,
                 )
                 suppressed += 1
             else:
                 accepted.append(fix)
         return accepted, suppressed
 
-    #Overall confidence recalculation
+    # Overall confidence recalculation
 
     def _recalculate_overall_confidence(self, fixes: list[SuggestedFix]) -> float:
         """
@@ -479,7 +486,7 @@ class AITroubleshootService:
             total_w += w
         return round(weighted_sum / total_w, 4)
 
-    #Audit logging
+    # Audit logging
 
     def _log_confidence_audit(
         self, session_id: str, fixes: list[SuggestedFix], suppressed: int
@@ -487,24 +494,38 @@ class AITroubleshootService:
         for fix in fixes:
             logger.info(
                 "CONFIDENCE_AUDIT session=%s step=%d level=%s score=%.2f matrix_backed=%s severity=%s",
-                session_id, fix.step, fix.confidence_level.value if fix.confidence_level else "unknown",
-                fix.confidence_score, fix.is_matrix_backed, fix.severity,
+                session_id,
+                fix.step,
+                fix.confidence_level.value if fix.confidence_level else "unknown",
+                fix.confidence_score,
+                fix.is_matrix_backed,
+                fix.severity,
             )
         if suppressed:
-            logger.info("CONFIDENCE_AUDIT session=%s suppressed_fixes=%d", session_id, suppressed)
+            logger.info(
+                "CONFIDENCE_AUDIT session=%s suppressed_fixes=%d",
+                session_id,
+                suppressed,
+            )
 
-    #Prompt builder
+    # Prompt builder
 
     def _build_user_message(self, request: TroubleshootRequest) -> str:
         parts = [
-            "## Diagnostic Report", json.dumps(request.diagnostic, indent=2), "",
-            "## Verification Results", json.dumps(request.verification, indent=2), "",
-            "## Environment Profile", json.dumps(request.profile, indent=2),
+            "## Diagnostic Report",
+            json.dumps(request.diagnostic, indent=2),
+            "",
+            "## Verification Results",
+            json.dumps(request.verification, indent=2),
+            "",
+            "## Environment Profile",
+            json.dumps(request.profile, indent=2),
         ]
         if request.user_description.strip():
             parts += ["", "## User Description", request.user_description.strip()]
         parts += [
-            "", "## Instructions",
+            "",
+            "## Instructions",
             f"Return a TroubleshootResponse JSON. Max {request.max_words} words. "
             "Populate confidence_level, confidence_score, is_matrix_backed, "
             "uncertainty_reason, and fallback_recommendation for EVERY SuggestedFix.",

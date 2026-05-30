@@ -10,6 +10,7 @@ Sources:
   - TensorFlow: https://www.tensorflow.org/install/pip#software_requirements
   - Ultralytics YOLOv8: https://docs.ultralytics.com/quickstart/
 """
+
 import json
 from pathlib import Path
 

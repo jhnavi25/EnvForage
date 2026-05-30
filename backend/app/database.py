@@ -2,6 +2,7 @@
 Database engine and session management.
 Uses SQLAlchemy 2.0 async API throughout.
 """
+
 from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
@@ -17,6 +18,7 @@ from app.config import get_settings
 
 class Base(DeclarativeBase):
     """Base class for all SQLAlchemy ORM models."""
+
     pass
 
 
