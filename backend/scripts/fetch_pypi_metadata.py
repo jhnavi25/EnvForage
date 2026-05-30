@@ -13,9 +13,9 @@ def fetch_pypi_python_requires(package: str, version: str | None = None) -> None
         url = f"https://pypi.org/pypi/{package}/{version}/json"
 
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'EnvForage/1.0'})
+        req = urllib.request.Request(url, headers={"User-Agent": "EnvForage/1.0"})
         with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode('utf-8'))
+            data = json.loads(response.read().decode("utf-8"))
 
             info = data.get("info", {})
             pkg_version = info.get("version", "unknown")
@@ -31,6 +31,7 @@ def fetch_pypi_python_requires(package: str, version: str | None = None) -> None
     except Exception as e:
         print(f"Error fetching metadata: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

@@ -10,8 +10,15 @@ from packaging.specifiers import SpecifierSet
 
 from app.compatibility.matrix.python import PYTHON_MATRIX
 
-MATRIX_JSON_PATH = Path(__file__).resolve().parent.parent / "app" / "compatibility" / "matrix" / "python_matrix_data.json"
+MATRIX_JSON_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "app"
+    / "compatibility"
+    / "matrix"
+    / "python_matrix_data.json"
+)
 SUPPORTED_PYTHONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+
 
 def fetch_pypi_python_bounds(package: str, version: str):
     """Fetch required python bounds from PyPI."""
@@ -48,8 +55,9 @@ def fetch_pypi_python_bounds(package: str, version: str):
     return {
         "min_python": supported[0],
         "max_python": supported[-1],
-        "supported_python": supported
+        "supported_python": supported,
     }
+
 
 def main():
     print("Automating PyPI metadata retrieval for PYTHON_MATRIX...")
@@ -63,7 +71,11 @@ def main():
     else:
         print("Bootstrapping from hardcoded python.py...")
         from dataclasses import asdict
-        raw_data = {fw: [asdict(entry) for entry in entries] for fw, entries in PYTHON_MATRIX.items()}
+
+        raw_data = {
+            fw: [asdict(entry) for entry in entries]
+            for fw, entries in PYTHON_MATRIX.items()
+        }
 
     updated_data = {}
 
@@ -88,6 +100,7 @@ def main():
         json.dump(updated_data, f, indent=4)
 
     print("Done! You can now configure python.py to load from this JSON file.")
+
 
 if __name__ == "__main__":
     main()

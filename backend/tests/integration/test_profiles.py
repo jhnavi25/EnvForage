@@ -16,6 +16,7 @@ ADMIN_HEADERS = {"X-Admin-API-Key": "test-admin-key-for-ci"}
 @pytest.fixture
 async def client(db_session_factory):
     """Provide an AsyncClient for testing FastAPI routes, overriding the DB dependency."""
+
     async def _get_db_override():
         async with db_session_factory() as session:
             yield session
@@ -53,20 +54,22 @@ async def test_profile_crud_lifecycle(client, db_session):
                 "version_spec": "==2.3.0",
                 "cuda_variant": "cu121",
                 "is_optional": False,
-                "install_order": 1
+                "install_order": 1,
             },
             {
                 "package_name": "torchvision",
                 "version_spec": "==0.18.0",
                 "cuda_variant": "cu121",
                 "is_optional": True,
-                "install_order": 2
-            }
-        ]
+                "install_order": 2,
+            },
+        ],
     }
 
     # ──── 1. CREATE ────
-    create_response = await client.post("/api/v1/profiles", json=profile_data, headers=ADMIN_HEADERS)
+    create_response = await client.post(
+        "/api/v1/profiles", json=profile_data, headers=ADMIN_HEADERS
+    )
     assert create_response.status_code == 201
     created_profile = create_response.json()
     assert created_profile["slug"] == profile_slug
@@ -107,7 +110,9 @@ async def test_profile_crud_lifecycle(client, db_session):
     assert not any(p["slug"] == profile_slug for p in listed_no_match)
 
     # ──── 4. DELETE ────
-    delete_response = await client.delete(f"/api/v1/profiles/{profile_slug}", headers=ADMIN_HEADERS)
+    delete_response = await client.delete(
+        f"/api/v1/profiles/{profile_slug}", headers=ADMIN_HEADERS
+    )
     assert delete_response.status_code == 204
 
     # ──── 5. VERIFY DELETED ────
@@ -122,7 +127,7 @@ async def test_profile_crud_lifecycle(client, db_session):
     assert not any(p["slug"] == profile_slug for p in listed_after)
 
     # Database state verification: verify soft-deleted (status="DELETED" and deleted_at is set)
-    db_session.expire_all() # clear session cache to fetch fresh from DB
+    db_session.expire_all()  # clear session cache to fetch fresh from DB
     db_result_deleted = await db_session.execute(
         select(EnvironmentProfile).where(EnvironmentProfile.slug == profile_slug)
     )
@@ -142,11 +147,15 @@ async def test_create_duplicate_slug_conflict(client):
     }
 
     # First creation
-    res1 = await client.post("/api/v1/profiles", json=profile_data, headers=ADMIN_HEADERS)
+    res1 = await client.post(
+        "/api/v1/profiles", json=profile_data, headers=ADMIN_HEADERS
+    )
     assert res1.status_code == 201
 
     # Duplicate creation
-    res2 = await client.post("/api/v1/profiles", json=profile_data, headers=ADMIN_HEADERS)
+    res2 = await client.post(
+        "/api/v1/profiles", json=profile_data, headers=ADMIN_HEADERS
+    )
     assert res2.status_code == 409
     assert "already exists" in res2.json()["detail"]["error"]["message"].lower()
 
@@ -160,7 +169,9 @@ async def test_get_nonexistent_profile_returns_404(client):
 
 async def test_delete_nonexistent_profile_returns_404(client):
     """Test that deleting a nonexistent profile slug returns 404 Not Found."""
-    response = await client.delete("/api/v1/profiles/nonexistent-profile-slug", headers=ADMIN_HEADERS)
+    response = await client.delete(
+        "/api/v1/profiles/nonexistent-profile-slug", headers=ADMIN_HEADERS
+    )
     assert response.status_code == 404
     assert response.json()["detail"]["error"]["code"] == "PROFILE_NOT_FOUND"
 

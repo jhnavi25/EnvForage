@@ -69,4 +69,3 @@ def test_gpu_architecture_mapping(rocm_version, gpu_arch):
 
     assert entry is not None
     assert gpu_arch in entry.supported_gpus
-

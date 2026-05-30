@@ -99,7 +99,9 @@ def create_app() -> FastAPI:
             overall = "degraded"
 
         try:
-            async with asyncio.timeout(1):  # Enforce 1s timeout to prevent TCP blackhole hang
+            async with asyncio.timeout(
+                1
+            ):  # Enforce 1s timeout to prevent TCP blackhole hang
                 redis = await get_redis_client()
                 if redis is None:
                     redis_status = "not_configured"

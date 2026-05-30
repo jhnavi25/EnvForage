@@ -6,6 +6,7 @@ All configuration is sourced from environment variables or a local `.env` file.
 (FastAPI, Alembic migrations, the seed service, ad-hoc `python -m ...` scripts)
 shares the same env-loading bootstrap before `Settings` is read.
 """
+
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -66,8 +67,8 @@ class Settings(BaseSettings):
     max_page_size: int = 100
 
     # ── Rate Limiting ─────────────────────────────────────────
-    rate_limit_ai_rpm: int = 10       # AI troubleshoot: requests per minute
-    rate_limit_repair_rpm: int = 20   # Repair endpoint: requests per minute
+    rate_limit_ai_rpm: int = 10  # AI troubleshoot: requests per minute
+    rate_limit_repair_rpm: int = 20  # Repair endpoint: requests per minute
     rate_limit_general_rpm: int = 60  # General API: requests per minute
     # ── Admin API Key ─────────────────────────────────────────
     admin_api_key: str = ""
@@ -90,6 +91,3 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Return cached settings singleton."""
     return Settings()
-
-
-

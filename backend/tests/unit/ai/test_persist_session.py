@@ -17,6 +17,7 @@ from app.ai.service import AITroubleshootService
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
+
 def _make_mock_db():
     """Return a mock AsyncSession with all async methods pre-configured."""
     db = MagicMock()
@@ -46,6 +47,7 @@ def _make_llm_result():
 
 
 # ── Tests for _persist_session ────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_persist_session_calls_rollback_on_db_error():
@@ -113,6 +115,7 @@ async def test_persist_session_logs_full_traceback_on_error():
 
 # ── Tests for troubleshoot() audit propagation ────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_troubleshoot_audit_marked_failed_when_persist_fails():
     """When _persist_session raises, _log_audit must be called with safety_passed=False."""
@@ -124,9 +127,11 @@ async def test_troubleshoot_audit_marked_failed_when_persist_fails():
         patch.object(service, "_fetch_session_history", new=AsyncMock(return_value=[])),
         patch.object(service._prompt_builder, "build", return_value="prompt"),
         patch("app.ai.service.get_provider") as mock_get_provider,
-        patch.object(service, "_persist_session", new=AsyncMock(
-            side_effect=Exception("DB constraint error")
-        )),
+        patch.object(
+            service,
+            "_persist_session",
+            new=AsyncMock(side_effect=Exception("DB constraint error")),
+        ),
         patch.object(service, "_log_audit", new=AsyncMock()) as mock_log_audit,
         patch.object(service, "_validate_response_safety", return_value=None),
     ):

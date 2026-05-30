@@ -25,6 +25,7 @@ from pydantic import (
 
 # Confidence primitives
 
+
 class FixConfidenceLevel(StrEnum):
     """
     HIGH   — Fix directly traceable to a known entry in the CompatibilityEngine
@@ -32,9 +33,11 @@ class FixConfidenceLevel(StrEnum):
     MEDIUM — Fix inferred from DiagnosticReport with partial evidence.
     LOW    — Fix is speculative; LLM is generalizing without a direct reference.
     """
+
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
+
 
 class LLMResponseMeta(BaseModel):
     provider: str
@@ -43,7 +46,9 @@ class LLMResponseMeta(BaseModel):
     completion_tokens: int = 0
     total_tokens: int = 0
 
+
 # Core AI models
+
 
 class SuggestedFix(BaseModel):
     """A single ordered remediation step returned by the AI layer."""
@@ -65,11 +70,13 @@ class SuggestedFix(BaseModel):
         description="HIGH = matrix-backed, MEDIUM = inferred, LOW = speculative",
     )
     confidence_score: float | None = Field(
-        default=None, ge=0.0, le=1.0,
+        default=None,
+        ge=0.0,
+        le=1.0,
         description="Numeric confidence: HIGH>=0.75, MEDIUM in [0.40,0.75), LOW<0.40",
     )
     is_matrix_backed: bool | None = Field(
-        default = None,
+        default=None,
         description="True only when fix is directly traceable to CompatibilityEngine matrix",
     )
     uncertainty_reason: str | None = Field(
@@ -83,7 +90,9 @@ class SuggestedFix(BaseModel):
 
     @field_validator("uncertainty_reason")
     @classmethod
-    def uncertainty_required_for_non_high(cls, v: str | None, info: ValidationInfo) -> str | None:
+    def uncertainty_required_for_non_high(
+        cls, v: str | None, info: ValidationInfo
+    ) -> str | None:
         level = info.data.get("confidence_level")
         if level is None:
             return v  # skip if confidence fields not provided
@@ -96,7 +105,9 @@ class SuggestedFix(BaseModel):
 
     @field_validator("is_matrix_backed")
     @classmethod
-    def matrix_backed_implies_high(cls, v: bool | None, info: ValidationInfo) -> bool | None:
+    def matrix_backed_implies_high(
+        cls, v: bool | None, info: ValidationInfo
+    ) -> bool | None:
         if v is None:
             return v  # skip if not provided
         level = info.data.get("confidence_level")
@@ -106,16 +117,23 @@ class SuggestedFix(BaseModel):
 
     @field_validator("confidence_score")
     @classmethod
-    def score_consistent_with_level(cls, v: float | None, info: ValidationInfo) -> float | None:
+    def score_consistent_with_level(
+        cls, v: float | None, info: ValidationInfo
+    ) -> float | None:
         import logging
+
         logger = logging.getLogger(__name__)
         level = info.data.get("confidence_level")
         if level is None or v is None:
             return v
         if level == FixConfidenceLevel.HIGH and v < 0.75:
-            logger.warning("confidence_score %.2f low for HIGH-level fix (expected >=0.75)", v)
+            logger.warning(
+                "confidence_score %.2f low for HIGH-level fix (expected >=0.75)", v
+            )
         elif level == FixConfidenceLevel.LOW and v >= 0.40:
-            logger.warning("confidence_score %.2f high for LOW-level fix (expected <0.40)", v)
+            logger.warning(
+                "confidence_score %.2f high for LOW-level fix (expected <0.40)", v
+            )
         return v
 
     @model_validator(mode="after")
@@ -129,16 +147,20 @@ class SuggestedFix(BaseModel):
     @model_validator(mode="after")
     def fallback_required_for_low(self) -> SuggestedFix:
         if self.confidence_level == FixConfidenceLevel.LOW:
-            if not self.fallback_recommendation or not self.fallback_recommendation.strip():
+            if (
+                not self.fallback_recommendation
+                or not self.fallback_recommendation.strip()
+            ):
                 raise ValueError(
                     "fallback_recommendation is required when confidence_level='low'"
                 )
         return self
 
+
 class TroubleshootRequest(BaseModel):
-    diagnostic: dict[str,Any]
-    verification: dict[str,Any] = Field(default_factory=dict[str,Any])
-    profile: dict[str,Any] = Field(default_factory=dict[str,Any])
+    diagnostic: dict[str, Any]
+    verification: dict[str, Any] = Field(default_factory=dict[str, Any])
+    profile: dict[str, Any] = Field(default_factory=dict[str, Any])
     profile_slug: str | None = None
     profile_name: str | None = None
     target_os: str | None = None
@@ -149,6 +171,7 @@ class TroubleshootRequest(BaseModel):
     max_words: int = Field(default=500, ge=50, le=2000)
     repair_script_available: bool = False
     disclaimer: str = "AI-generated advisory. Review carefully before executing."
+
 
 class TroubleshootResponse(BaseModel):
     session_id: str

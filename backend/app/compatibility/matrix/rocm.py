@@ -7,6 +7,7 @@ Sources:
   - AMD ROCm Release Notes: https://rocm.docs.amd.com/en/latest/release/release-notes.html
   - PyTorch ROCm Support: https://pytorch.org/get-started/locally/
 """
+
 from app.compatibility.models import ROCMMatrixEntry
 
 # ── ROCm Version → Driver + GPU Matrix ───────────────────────────────────────

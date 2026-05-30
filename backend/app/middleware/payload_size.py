@@ -71,24 +71,30 @@ class PayloadSizeLimitMiddleware:
     @staticmethod
     async def _send_413(send: Send) -> None:
         """Send a structured 413 response matching the API error envelope."""
-        await send({
-            "type": "http.response.start",
-            "status": 413,
-            "headers": [
-                (b"content-type", b"application/json"),
-            ],
-        })
-        body = json.dumps({
-            "error": {
-                "code": "PAYLOAD_TOO_LARGE",
-                "message": (
-                    f"Request body exceeds the maximum allowed size "
-                    f"of {MAX_PAYLOAD_BYTES // (1024 * 1024)} MB."
-                ),
+        await send(
+            {
+                "type": "http.response.start",
+                "status": 413,
+                "headers": [
+                    (b"content-type", b"application/json"),
+                ],
             }
-        }).encode("utf-8")
-        await send({
-            "type": "http.response.body",
-            "body": body,
-            "more_body": False,
-        })
+        )
+        body = json.dumps(
+            {
+                "error": {
+                    "code": "PAYLOAD_TOO_LARGE",
+                    "message": (
+                        f"Request body exceeds the maximum allowed size "
+                        f"of {MAX_PAYLOAD_BYTES // (1024 * 1024)} MB."
+                    ),
+                }
+            }
+        ).encode("utf-8")
+        await send(
+            {
+                "type": "http.response.body",
+                "body": body,
+                "more_body": False,
+            }
+        )

@@ -1,4 +1,5 @@
 """Tests for RepairService — template rendering and safety validation."""
+
 import pytest
 
 from app.services.repair_service import (
@@ -22,7 +23,12 @@ _TEMPLATE_PARAMS: dict[str, dict] = {
     "repair_venv_recreate": {"python_bin": "python3", "venv_dir": ".venv"},
     "repair_pip_reinstall": {
         "packages": [
-            {"name": "torch", "version": "2.3.0", "pip_spec": "torch==2.3.0", "index_url": None},
+            {
+                "name": "torch",
+                "version": "2.3.0",
+                "pip_spec": "torch==2.3.0",
+                "index_url": None,
+            },
         ],
     },
 }
@@ -65,11 +71,15 @@ class TestRepairService:
         assert exc_info.value.template_id == "nonexistent_template"
 
     def test_render_cuda_upgrade_injects_version(self, service):
-        result = service.render_repair("repair_cuda_upgrade", {"target_cuda_version": "12.4"})
+        result = service.render_repair(
+            "repair_cuda_upgrade", {"target_cuda_version": "12.4"}
+        )
         assert "12.4" in result["content"]
 
     def test_render_python_install_injects_version(self, service):
-        result = service.render_repair("repair_python_install", {"target_python_version": "3.12"})
+        result = service.render_repair(
+            "repair_python_install", {"target_python_version": "3.12"}
+        )
         assert "3.12" in result["content"]
 
     def test_render_includes_timestamp(self, service):

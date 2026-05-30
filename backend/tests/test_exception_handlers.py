@@ -4,6 +4,7 @@ No database required — service layer is mocked.
 Auth dependencies are stubbed out so these tests focus solely on
 exception-to-HTTP-response mapping, not authentication logic.
 """
+
 from unittest.mock import AsyncMock, patch
 
 import pytest

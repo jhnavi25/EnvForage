@@ -5,6 +5,7 @@ Exposes:
   - Request count, latency, and status-code histograms
   - AI provider token consumption counters
 """
+
 import time
 
 from fastapi import FastAPI, Request, Response
@@ -76,7 +77,6 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             match, _ = route.matches(request.scope)
             if match == Match.FULL:
                 return str(getattr(route, "path", route.path))
-
         return request.url.path
 
 
@@ -92,13 +92,13 @@ def record_ai_token_usage(
     AI_REQUESTS_TOTAL.labels(provider=provider, model=model, status=status).inc()
 
     if prompt_tokens:
-        AI_TOKENS_TOTAL.labels(
-            provider=provider, model=model, type="prompt"
-        ).inc(prompt_tokens)
+        AI_TOKENS_TOTAL.labels(provider=provider, model=model, type="prompt").inc(
+            prompt_tokens
+        )
     if completion_tokens:
-        AI_TOKENS_TOTAL.labels(
-            provider=provider, model=model, type="completion"
-        ).inc(completion_tokens)
+        AI_TOKENS_TOTAL.labels(provider=provider, model=model, type="completion").inc(
+            completion_tokens
+        )
 
 
 def setup_metrics(app: FastAPI) -> None:

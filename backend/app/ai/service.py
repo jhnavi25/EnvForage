@@ -155,19 +155,11 @@ class AITroubleshootService:
         if callable(token_usage):
             token_usage = token_usage()
 
-        total_tokens = 0
-        prompt_tokens = 0
-        completion_tokens = 0
-
-        if isinstance(token_usage, dict):
-            t_val = token_usage.get("total_tokens", 0)
-            total_tokens = t_val if isinstance(t_val, int) else 0
-
-            p_val = token_usage.get("prompt_tokens", 0)
-            prompt_tokens = p_val if isinstance(p_val, int) else 0
-
-            c_val = token_usage.get("completion_tokens", 0)
-            completion_tokens = c_val if isinstance(c_val, int) else 0
+        total_tokens = token_usage.get("total_tokens", 0) if token_usage else 0
+        prompt_tokens = token_usage.get("prompt_tokens", 0) if token_usage else 0
+        completion_tokens = (
+            token_usage.get("completion_tokens", 0) if token_usage else 0
+        )
 
         record_ai_token_usage(
             provider=provider_name,
@@ -298,16 +290,18 @@ class AITroubleshootService:
         except OperationalError as exc:
             logger.critical(
                 "Critical database connectivity failure for session %s: %s",
-                session_id, exc
+                session_id,
+                exc,
             )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Database error. Unable to process history request."
+                detail="Database service is temporarily unavailable. Unable to process history request.",
             )
         except SQLAlchemyError as exc:
             logger.error(
                 "Transient database error fetching session history for %s: %s",
-                session_id, exc
+                session_id,
+                exc,
             )
             return []
 
@@ -380,7 +374,7 @@ class AITroubleshootService:
 
                 if attempt < max_retries - 1:
                     logger.warning(
-                        "Retrying AI session persistence for session %s",
+                        "Retrying AI session persistencefor session %s",
                         session_id,
                     )
                     await asyncio.sleep(1)
@@ -436,8 +430,11 @@ class AITroubleshootService:
             if (fix.confidence_score or 0.0) < LOW_CONFIDENCE_GATE:
                 logger.warning(
                     "session=%s step=%d '%s' suppressed (score=%.2f < gate=%.2f)",
-                    session_id, fix.step, fix.title,
-                    fix.confidence_score, LOW_CONFIDENCE_GATE,
+                    session_id,
+                    fix.step,
+                    fix.title,
+                    fix.confidence_score,
+                    LOW_CONFIDENCE_GATE,
                 )
                 suppressed += 1
             else:
@@ -470,24 +467,38 @@ class AITroubleshootService:
         for fix in fixes:
             logger.info(
                 "CONFIDENCE_AUDIT session=%s step=%d level=%s score=%.2f matrix_backed=%s severity=%s",
-                session_id, fix.step, fix.confidence_level.value if fix.confidence_level else "unknown",
-                fix.confidence_score, fix.is_matrix_backed, fix.severity,
+                session_id,
+                fix.step,
+                fix.confidence_level.value if fix.confidence_level else "unknown",
+                fix.confidence_score,
+                fix.is_matrix_backed,
+                fix.severity,
             )
         if suppressed:
-            logger.info("CONFIDENCE_AUDIT session=%s suppressed_fixes=%d", session_id, suppressed)
+            logger.info(
+                "CONFIDENCE_AUDIT session=%s suppressed_fixes=%d",
+                session_id,
+                suppressed,
+            )
 
     # Prompt builder
 
     def _build_user_message(self, request: TroubleshootRequest) -> str:
         parts = [
-            "## Diagnostic Report", json.dumps(request.diagnostic, indent=2), "",
-            "## Verification Results", json.dumps(request.verification, indent=2), "",
-            "## Environment Profile", json.dumps(request.profile, indent=2),
+            "## Diagnostic Report",
+            json.dumps(request.diagnostic, indent=2),
+            "",
+            "## Verification Results",
+            json.dumps(request.verification, indent=2),
+            "",
+            "## Environment Profile",
+            json.dumps(request.profile, indent=2),
         ]
         if request.user_description.strip():
             parts += ["", "## User Description", request.user_description.strip()]
         parts += [
-            "", "## Instructions",
+            "",
+            "## Instructions",
             f"Return a TroubleshootResponse JSON. Max {request.max_words} words. "
             "Populate confidence_level, confidence_score, is_matrix_backed, "
             "uncertainty_reason, and fallback_recommendation for EVERY SuggestedFix.",

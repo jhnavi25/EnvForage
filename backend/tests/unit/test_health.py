@@ -129,9 +129,7 @@ def test_health_redis_timeout():
     timed_out_redis.ping = AsyncMock(side_effect=TimeoutError())
     with (
         patch("app.main.AsyncSessionLocal", return_value=_mock_db_ok()),
-        patch(
-            "app.main.get_redis_client", new=AsyncMock(return_value=timed_out_redis)
-        ),
+        patch("app.main.get_redis_client", new=AsyncMock(return_value=timed_out_redis)),
     ):
         response = TestClient(create_app()).get("/health")
     assert response.status_code == 503

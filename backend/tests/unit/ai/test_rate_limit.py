@@ -1,4 +1,5 @@
 """Tests for the in-memory rate limiter."""
+
 from unittest.mock import MagicMock
 
 import pytest
@@ -15,7 +16,9 @@ class TestInMemoryBackend:
     @pytest.mark.asyncio
     async def test_allows_within_limit(self, backend):
         for _ in range(5):
-            allowed, info = await backend.is_allowed("test_key", max_requests=5, window_seconds=60)
+            allowed, info = await backend.is_allowed(
+                "test_key", max_requests=5, window_seconds=60
+            )
             assert allowed is True
 
     @pytest.mark.asyncio
@@ -25,7 +28,9 @@ class TestInMemoryBackend:
             await backend.is_allowed("test_key", max_requests=3, window_seconds=60)
 
         # 4th request should be blocked
-        allowed, info = await backend.is_allowed("test_key", max_requests=3, window_seconds=60)
+        allowed, info = await backend.is_allowed(
+            "test_key", max_requests=3, window_seconds=60
+        )
         assert allowed is False
         assert info["remaining"] == 0
         assert info["reset"] > 0
@@ -37,20 +42,28 @@ class TestInMemoryBackend:
             await backend.is_allowed("key_a", max_requests=2, window_seconds=60)
 
         # key_a should be blocked
-        allowed_a, _ = await backend.is_allowed("key_a", max_requests=2, window_seconds=60)
+        allowed_a, _ = await backend.is_allowed(
+            "key_a", max_requests=2, window_seconds=60
+        )
         assert allowed_a is False
 
         # key_b should still be allowed
-        allowed_b, _ = await backend.is_allowed("key_b", max_requests=2, window_seconds=60)
+        allowed_b, _ = await backend.is_allowed(
+            "key_b", max_requests=2, window_seconds=60
+        )
         assert allowed_b is True
 
     @pytest.mark.asyncio
     async def test_remaining_count(self, backend):
-        allowed, info = await backend.is_allowed("test", max_requests=5, window_seconds=60)
+        allowed, info = await backend.is_allowed(
+            "test", max_requests=5, window_seconds=60
+        )
         assert allowed is True
         assert info["remaining"] == 4
 
-        allowed, info = await backend.is_allowed("test", max_requests=5, window_seconds=60)
+        allowed, info = await backend.is_allowed(
+            "test", max_requests=5, window_seconds=60
+        )
         assert info["remaining"] == 3
 
     @pytest.mark.asyncio
