@@ -78,7 +78,7 @@ export default function HomePage() {
           alignItems: "center",
           zIndex: 1,
           padding: "4rem 0",
-          background: "var(--bg-primary)"
+          background: "transparent"
         }}
       >
         <div 
@@ -192,7 +192,7 @@ export default function HomePage() {
         style={{ 
           position: "relative", 
           zIndex: 10, 
-          background: "var(--bg-primary)",
+          background: "transparent",
           boxShadow: "0 -20px 50px rgba(0,0,0,0.05)",
         }}
       >
