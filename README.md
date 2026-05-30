@@ -169,6 +169,7 @@ helm install envforge ./helm/envforge \
   --set ingress.host=api.yourdomain.com
 
 kubectl port-forward svc/envforge 8000:8000
+kubectl port-forward svc/envforge-frontend 3000:3000
 ```
 
 The API is now running at `http://localhost:8000`.
