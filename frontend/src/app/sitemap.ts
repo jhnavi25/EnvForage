@@ -1,42 +1,46 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  let rawBase = process.env.NEXT_PUBLIC_BASE_URL?.trim() || ''
+
+  if (process.env.NODE_ENV === 'production' && (!rawBase || rawBase.includes('localhost'))) {
+    throw new Error('NEXT_PUBLIC_BASE_URL is not set or is localhost in production')
+  }
+
+  if (!rawBase) rawBase = 'http://localhost:3000'
+  if (rawBase.endsWith('/')) rawBase = rawBase.slice(0, -1)
+  if (!rawBase.startsWith('http')) rawBase = `https://${rawBase}`
+
+  const baseUrl = rawBase
 
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 1,
     },
     {
       url: `${baseUrl}/coming-soon`,
-      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/diagnose`,
-      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/generate`,
-      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/profiles`,
-      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
       url: `${baseUrl}/troubleshoot`,
-      lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
     }
